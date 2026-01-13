@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}NGO Donation Platform{% endblock %}</title>
+
+    <!-- Professional font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+    <!-- ================= HEADER / NAVBAR ================= -->
+    <header class="site-header">
+        <div class="container header-inner">
+
+            <!-- Logo -->
+            <div class="site-logo">
+                <a href="/">NGO Platform</a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <a href="/campaigns/">Campaigns</a>
+                <a href="/about/">About Us</a>
+                <a href="/contact/">Contact</a>
+            </nav>
+
+            <!-- Auth links -->
+            <div class="auth-links">
+                <a href="/accounts/login/">Login</a>
+                <a href="/accounts/register/" class="btn-primary">Register</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>© 2026 NGO Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

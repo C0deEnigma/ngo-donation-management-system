@@ -32,18 +32,31 @@ class CampaignAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            "fields": ("title", "description")
+            "fields": (
+                "title",
+                "description",
+                "image",
+            )
         }),
         ("Financial Info", {
-            "fields": ("goal_amount",)
+            "fields": (
+                "goal_amount",
+            )
         }),
         ("Schedule", {
-            "fields": ("start_date", "end_date")
+            "fields": (
+                "start_date",
+                "end_date",
+            )
         }),
         ("Status", {
-            "fields": ("is_active",)
+            "fields": (
+                "is_active",
+            )
         }),
         ("Timestamps", {
-            "fields": ("created_at",)
+            "fields": (
+                "created_at",
+            )
         }),
     )
