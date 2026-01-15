@@ -5,9 +5,9 @@
 
 {% block content %}
 
-<!-- ================= HERO SECTION (FULL WIDTH) ================= -->
+<!-- ================= HERO SECTION ================= -->
 <section class="hero">
-    <img src="{% static 'images/hero.jpg' %}" alt="NGO work image" class="hero-image">
+    <img src="{% static 'images/hero.jpg' %}" alt="NGO work image">
 
     <div class="hero-overlay">
         <h1>Enabling Lives. Empowering Communities.</h1>
@@ -16,9 +16,10 @@
     </div>
 </section>
 
-<!-- ================= CAMPAIGNS SECTION ================= -->
+<!-- ================= CAMPAIGNS SLIDER ================= -->
 <section class="section">
     <div class="container">
+
         <h2 class="section-title">Our Campaigns</h2>
 
         <div class="campaign-slider">
@@ -29,17 +30,19 @@
                     {% else %}
                         <img src="{% static 'images/campaign_placeholder.jpg' %}" alt="Campaign">
                     {% endif %}
-                    <span>{{ campaign.title }}</span>
+                    <span class="campaign-slide-title">
+                        {{ campaign.title }}
+                    </span>
                 </a>
             {% empty %}
-                <p>No active campaigns right now.</p>
+                <p class="center">No active campaigns right now.</p>
             {% endfor %}
         </div>
+
     </div>
 </section>
 
-
-<!-- ================= ABOUT SECTION ================= -->
+<!-- ================= ABOUT ================= -->
 <section class="section">
     <div class="container">
         <h2 class="section-title">Who We Are</h2>
@@ -53,7 +56,7 @@
     </div>
 </section>
 
-<!-- ================= CTA SECTION ================= -->
+<!-- ================= CTA ================= -->
 <section class="section">
     <div class="container center">
         <h2>Be a Part of the Change</h2>

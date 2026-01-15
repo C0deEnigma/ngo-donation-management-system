@@ -7,7 +7,7 @@
 
     <title>{% block title %}NGO Donation Platform{% endblock %}</title>
 
-    <!-- Professional font -->
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,49 +18,47 @@
 
 <body>
 
-    <!-- ================= HEADER / NAVBAR ================= -->
+    <!-- ================= HEADER ================= -->
     <header class="site-header">
-        <div class="container header-inner">
+        <div class="header-inner">
 
-            <!-- Logo -->
             <div class="site-logo">
                 <a href="/">NGO Platform</a>
             </div>
 
-            <!-- Navigation -->
             <nav class="main-nav">
                 <a href="/campaigns/">Campaigns</a>
                 <a href="/about/">About Us</a>
                 <a href="/contact/">Contact</a>
             </nav>
 
-            <!-- Auth -->
-            {% if user.is_authenticated %}
-                <p>
-                    Logged in as <strong>{{ user.username }}</strong>
-                </p>
+            <div class="auth-links">
+                {% if user.is_authenticated %}
+                    <span>Logged in as <strong>{{ user.username }}</strong></span>
 
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'signup' %}">Register</a>
-            {% endif %}
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary" style="padding:6px 12px; font-size:0.85rem;">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'signup' %}">Register</a>
+                {% endif %}
+            </div>
 
         </div>
     </header>
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- ================= PAGE CONTENT ================= -->
     <main>
         {% block content %}{% endblock %}
     </main>
 
-
     <!-- ================= FOOTER ================= -->
     <footer class="site-footer">
-        <div class="container footer-inner">
+        <div class="footer-inner">
             <p>© 2026 NGO Platform. All rights reserved.</p>
         </div>
     </footer>
