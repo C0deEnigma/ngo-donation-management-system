@@ -10,7 +10,7 @@ from .models import Registration
 def register_for_campaign(request, campaign_id):
     campaign = get_object_or_404(Campaign, id=campaign_id)
 
-    # Check if already registered
+    # If already registered → go to donation
     existing = Registration.objects.filter(
         user=request.user,
         campaign=campaign
@@ -18,7 +18,7 @@ def register_for_campaign(request, campaign_id):
 
     if existing:
         messages.info(request, "You are already registered for this campaign.")
-        return redirect("campaign_detail", campaign.id)
+        return redirect("donate", campaign_id=campaign.id)
 
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
@@ -30,9 +30,9 @@ def register_for_campaign(request, campaign_id):
         )
 
         messages.success(request, "Registration successful.")
-        return redirect("campaign_detail", campaign.id)
 
-    context = {
+        return redirect("donate", campaign_id=campaign.id)
+
+    return render(request, "registrations/register.html", {
         "campaign": campaign
-    }
-    return render(request, "registrations/register.html", context)
+    })

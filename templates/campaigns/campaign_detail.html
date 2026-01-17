@@ -57,24 +57,67 @@
             <p>{{ campaign.description }}</p>
         </div>
 
+        <!-- ACTION SECTION -->
         <div class="center">
-            {% if campaign.is_active %}
-                {% if user.is_authenticated %}
-                    <a href="{% url 'campaign_register' campaign.id %}"
-                       class="btn-primary btn-large">
-                        Register
-                    </a>
-                {% else %}
+
+            {% if not campaign.is_active %}
+
+                <button class="btn-primary btn-large" disabled>
+                    Campaign Closed
+                </button>
+
+            {% else %}
+
+                {% if not user.is_authenticated %}
+
                     <a href="{% url 'login' %}?next={% url 'campaign-detail' campaign.id %}"
                        class="btn-primary btn-large">
                         Register
                     </a>
+
+                {% else %}
+
+                    {% if not is_registered %}
+
+                        <a href="{% url 'campaign_register' campaign.id %}"
+                           class="btn-primary btn-large">
+                            Register
+                        </a>
+
+                    {% else %}
+
+                        {% if donation %}
+
+                            {% if donation.payment_status == 'P' %}
+                                <span class="status pending">
+                                    Donation Pending
+                                </span>
+
+                            {% elif donation.payment_status == 'S' %}
+                                <span class="status success">
+                                    Donation Successful
+                                </span>
+
+                            {% else %}
+                                <a href="{% url 'donate' campaign.id %}"
+                                   class="btn-primary btn-large">
+                                    Donate
+                                </a>
+                            {% endif %}
+
+                        {% else %}
+                            <a href="{% url 'donate' campaign.id %}"
+                               class="btn-primary btn-large">
+                                Donate
+                            </a>
+                        {% endif %}
+
+                    {% endif %}
+
                 {% endif %}
-            {% else %}
-                <button class="btn-primary btn-large" disabled>
-                    Registration Closed
-                </button>
+
             {% endif %}
+
         </div>
 
     </div>
