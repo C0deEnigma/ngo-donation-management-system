@@ -9,6 +9,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("", include("campaigns.urls")),
+    path("registrations/", include("registrations.urls")),
 ]
 
 if settings.DEBUG:
