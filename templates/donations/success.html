@@ -7,11 +7,12 @@
         <h2>Thank You for Your Donation</h2>
 
         <p>
-            Your donation to <strong>{{ campaign.title }}</strong>
+            Your donation to
+            <strong>{{ donation.registration.campaign.title }}</strong>
             was successful.
         </p>
 
-        <a href="{% url 'campaign_detail' campaign.id %}"
+        <a href="{% url 'campaign_detail' donation.registration.campaign.id %}"
            class="btn-primary btn-large">
             Back to Campaign
         </a>

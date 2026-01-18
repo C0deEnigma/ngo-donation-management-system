@@ -3,13 +3,12 @@
 
 {% block content %}
 <main class="section">
-
     <div class="container">
 
         {% if campaign.image %}
-        <div class="campaign-image">
-            <img src="{{ campaign.image.url }}" alt="{{ campaign.title }}">
-        </div>
+            <div class="campaign-image">
+                <img src="{{ campaign.image.url }}" alt="{{ campaign.title }}">
+            </div>
         {% endif %}
 
         <h1 class="campaign-title center">
@@ -32,10 +31,10 @@
                     </tr>
 
                     {% if campaign.collected_amount is not None %}
-                    <tr>
-                        <th>Collected Amount</th>
-                        <td>₹ {{ campaign.collected_amount }}</td>
-                    </tr>
+                        <tr>
+                            <th>Collected Amount</th>
+                            <td>₹ {{ campaign.collected_amount }}</td>
+                        </tr>
                     {% endif %}
 
                     <tr>
@@ -49,7 +48,6 @@
                     </tr>
                 </tbody>
             </table>
-
         </div>
 
         <div class="campaign-description">
@@ -70,9 +68,9 @@
 
                 {% if not user.is_authenticated %}
 
-                    <a href="{% url 'login' %}?next={% url 'campaign-detail' campaign.id %}"
+                    <a href="{% url 'login' %}?next={% url 'campaign_detail' campaign.id %}"
                        class="btn-primary btn-large">
-                        Register
+                        Login to Continue
                     </a>
 
                 {% else %}
@@ -86,30 +84,19 @@
 
                     {% else %}
 
-                        {% if donation %}
+                        {% if donation and donation.payment_status == 'P' %}
 
-                            {% if donation.payment_status == 'P' %}
-                                <span class="status pending">
-                                    Donation Pending
-                                </span>
-
-                            {% elif donation.payment_status == 'S' %}
-                                <span class="status success">
-                                    Donation Successful
-                                </span>
-
-                            {% else %}
-                                <a href="{% url 'donate' campaign.id %}"
-                                   class="btn-primary btn-large">
-                                    Donate
-                                </a>
-                            {% endif %}
+                            <span class="status pending">
+                                Donation Pending
+                            </span>
 
                         {% else %}
-                            <a href="{% url 'donate' campaign.id %}"
+
+                            <a href="{% url 'donations:donate' campaign.id %}"
                                class="btn-primary btn-large">
                                 Donate
                             </a>
+
                         {% endif %}
 
                     {% endif %}
@@ -121,6 +108,5 @@
         </div>
 
     </div>
-
 </main>
 {% endblock %}

@@ -8,10 +8,10 @@
 
         <p>
             Unfortunately, your payment could not be completed.
-            You can try again later.
+            You can try again.
         </p>
 
-        <a href="{% url 'donate' campaign.id %}"
+        <a href="{% url 'donations:donate' donation.registration.campaign.id %}"
            class="btn-primary btn-large">
             Try Again
         </a>

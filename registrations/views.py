@@ -31,7 +31,8 @@ def register_for_campaign(request, campaign_id):
 
         messages.success(request, "Registration successful.")
 
-        return redirect("donate", campaign_id=campaign.id)
+        return redirect("donations:donate", campaign.id)
+
 
     return render(request, "registrations/register.html", {
         "campaign": campaign

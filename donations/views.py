@@ -1,74 +1,148 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
+from django.urls import reverse
+from django.conf import settings
 
-from campaigns.models import Campaign
 from registrations.models import Registration
 from .models import Donation
 
+import stripe
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+# =====================================================
+# DONATE
+# =====================================================
 @login_required
 def donate(request, campaign_id):
-    campaign = get_object_or_404(Campaign, id=campaign_id)
-
-    # User must be registered for the campaign
     registration = get_object_or_404(
         Registration,
         user=request.user,
-        campaign=campaign
+        campaign_id=campaign_id
     )
 
-    # Block ONLY if there is a pending donation
+    campaign = registration.campaign
+
+    # Block only if a payment is currently pending
     pending = Donation.objects.filter(
         registration=registration,
-        payment_status="P"
+        payment_status=Donation.PaymentStatus.PENDING
     ).first()
 
     if pending:
         messages.info(
             request,
-            "You already have a donation in progress. Please wait for it to complete."
+            "You already have a payment in progress. Please complete it first."
         )
-        return redirect("campaign_detail", campaign.id)
+        return redirect("donations:pay", pending.id)
 
     if request.method == "POST":
         amount = request.POST.get("amount")
 
         if not amount:
             messages.error(request, "Please enter a donation amount.")
-            return redirect("donate", campaign_id=campaign.id)
+            return redirect("donations:donate", campaign.id)
 
-        # Create a new donation attempt
         donation = Donation.objects.create(
-            campaign=campaign,
             registration=registration,
             amount=amount,
-            payment_status="P",
-            payment_provider="sandbox"
+            payment_status=Donation.PaymentStatus.PENDING,
+            payment_provider="stripe_test"
         )
 
-        # MOCK payment result (success for now)
-        donation.payment_status = "S"
-        donation.save()
-
-        return redirect("donation_success", campaign_id=campaign.id)
+        return redirect("donations:pay", donation.id)
 
     return render(request, "donations/donate.html", {
         "campaign": campaign
     })
 
 
+# =====================================================
+# PAY (Stripe Checkout)
+# =====================================================
 @login_required
-def donation_success(request, campaign_id):
-    campaign = get_object_or_404(Campaign, id=campaign_id)
+def pay(request, donation_id):
+    donation = get_object_or_404(Donation, id=donation_id)
+
+    if donation.registration.user != request.user:
+        return HttpResponseForbidden("Not allowed")
+
+    if donation.payment_status != Donation.PaymentStatus.PENDING:
+        return redirect(
+            "campaign_detail",
+            donation.registration.campaign.id
+        )
+
+    session = stripe.checkout.Session.create(
+        mode="payment",
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "inr",
+                "product_data": {
+                    "name": donation.registration.campaign.title,
+                },
+                "unit_amount": int(donation.amount * 100),
+            },
+            "quantity": 1,
+        }],
+        success_url=request.build_absolute_uri(
+            reverse("donations:stripe_success", args=[donation.id])
+        ),
+        cancel_url=request.build_absolute_uri(
+            reverse("donations:stripe_cancel", args=[donation.id])
+        ),
+    )
+
+    return redirect(session.url)
+
+
+# =====================================================
+# STRIPE SUCCESS
+# =====================================================
+@login_required
+def stripe_success(request, donation_id):
+    donation = get_object_or_404(Donation, id=donation_id)
+
+    if donation.registration.user != request.user:
+        return HttpResponseForbidden("Not allowed")
+
+    if donation.payment_status != Donation.PaymentStatus.PENDING:
+        return redirect(
+            "campaign_detail",
+            donation.registration.campaign.id
+        )
+
+    donation.payment_status = Donation.PaymentStatus.SUCCESS
+    donation.save()
+
     return render(request, "donations/success.html", {
-        "campaign": campaign
+        "donation": donation
     })
 
 
+# =====================================================
+# STRIPE CANCEL / FAILURE
+# =====================================================
 @login_required
-def donation_failed(request, campaign_id):
-    campaign = get_object_or_404(Campaign, id=campaign_id)
+def stripe_cancel(request, donation_id):
+    donation = get_object_or_404(Donation, id=donation_id)
+
+    if donation.registration.user != request.user:
+        return HttpResponseForbidden("Not allowed")
+
+    if donation.payment_status != Donation.PaymentStatus.PENDING:
+        return redirect(
+            "campaign_detail",
+            donation.registration.campaign.id
+        )
+
+    donation.payment_status = Donation.PaymentStatus.FAILED
+    donation.save()
+
     return render(request, "donations/failed.html", {
-        "campaign": campaign
+        "donation": donation
     })
