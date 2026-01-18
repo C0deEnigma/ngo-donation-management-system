@@ -12,6 +12,8 @@ import stripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+MIN_DONATION_INR = 50  # Stripe minimum (~$0.50)
+
 
 # =====================================================
 # DONATE
@@ -46,6 +48,19 @@ def donate(request, campaign_id):
             messages.error(request, "Please enter a donation amount.")
             return redirect("donations:donate", campaign.id)
 
+        try:
+            amount = int(amount)
+        except ValueError:
+            messages.error(request, "Invalid donation amount.")
+            return redirect("donations:donate", campaign.id)
+
+        if amount < MIN_DONATION_INR:
+            messages.error(
+                request,
+                f"Minimum donation amount is ₹{MIN_DONATION_INR}."
+            )
+            return redirect("donations:donate", campaign.id)
+
         donation = Donation.objects.create(
             registration=registration,
             amount=amount,
@@ -56,7 +71,8 @@ def donate(request, campaign_id):
         return redirect("donations:pay", donation.id)
 
     return render(request, "donations/donate.html", {
-        "campaign": campaign
+        "campaign": campaign,
+        "min_amount": MIN_DONATION_INR,
     })
 
 
@@ -76,6 +92,19 @@ def pay(request, donation_id):
             donation.registration.campaign.id
         )
 
+    # Safety check (never trust earlier steps blindly)
+    if donation.amount < MIN_DONATION_INR:
+        messages.error(
+            request,
+            f"Minimum donation amount is ₹{MIN_DONATION_INR}."
+        )
+        donation.payment_status = Donation.PaymentStatus.FAILED
+        donation.save()
+        return redirect(
+            "campaign_detail",
+            donation.registration.campaign.id
+        )
+
     session = stripe.checkout.Session.create(
         mode="payment",
         payment_method_types=["card"],
@@ -85,7 +114,7 @@ def pay(request, donation_id):
                 "product_data": {
                     "name": donation.registration.campaign.title,
                 },
-                "unit_amount": int(donation.amount * 100),
+                "unit_amount": int(donation.amount * 100),  # INR → paise
             },
             "quantity": 1,
         }],

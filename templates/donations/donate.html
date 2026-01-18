@@ -16,13 +16,19 @@
 
             <div class="form-group">
                 <label for="amount">Donation Amount (₹)</label><br>
+
                 <input
                     type="number"
                     id="amount"
                     name="amount"
-                    min="1"
+                    min="{{ min_amount|default:50 }}"
+                    step="1"
                     required
                 >
+
+                <small class="help-text">
+                    Minimum donation amount is ₹{{ min_amount|default:50 }}.
+                </small>
             </div>
 
             <br>
