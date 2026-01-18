@@ -1,14 +1,23 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+
+from .forms import CustomUserCreationForm
 from registrations.models import Registration
 from donations.models import Donation
 
-def post_login_redirect(user):
-    if user.is_staff:
-        return redirect('/admin/')
-    return redirect('profile')
+
+class CustomLoginView(LoginView):
+    template_name = "registration/login.html"
+
+    def get_success_url(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return reverse_lazy("admin:index")   # Django admin dashboard
+        return reverse_lazy("profile")           # User profile page
 
 
 def signup(request):
@@ -18,7 +27,8 @@ def signup(request):
             user = form.save()
             login(request, user)
 
-            return post_login_redirect(user)
+            # New users are never admins → send directly to profile
+            return redirect("profile")
     else:
         form = CustomUserCreationForm()
 
@@ -32,15 +42,15 @@ def profile(request):
     registrations = (
         Registration.objects
         .filter(user=user)
-        .select_related('campaign')
-        .order_by('-created_at')
+        .select_related("campaign")
+        .order_by("-created_at")
     )
 
     donations = (
         Donation.objects
         .filter(registration__user=user)
-        .select_related('registration', 'registration__campaign')
-        .order_by('-created_at')
+        .select_related("registration", "registration__campaign")
+        .order_by("-created_at")
     )
 
     return render(
