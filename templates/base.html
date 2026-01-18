@@ -34,7 +34,15 @@
 
             <div class="auth-links">
                 {% if user.is_authenticated %}
-                    <span>Logged in as <strong>{{ user.username }}</strong></span>
+                    <span>
+                        Logged in as <strong>{{ user.username }}</strong>
+                    </span>
+
+                    {% if user.is_staff %}
+                        <a href="/admin/" class="btn-link">Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'profile' %}" class="btn-link">My Profile</a>
+                    {% endif %}
 
                     <form method="post" action="{% url 'logout' %}" style="display:inline;">
                         {% csrf_token %}
@@ -47,6 +55,7 @@
                     <a href="{% url 'signup' %}">Register</a>
                 {% endif %}
             </div>
+
 
         </div>
     </header>

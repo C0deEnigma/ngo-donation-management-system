@@ -334,3 +334,87 @@ main {
     text-align: center;
     font-size: 0.9rem;
 }
+
+
+/* ================= PROFILE PAGE ================= */
+
+.profile-page {
+    max-width: 1100px;
+    margin: 3rem auto;
+}
+
+/* ---- Profile Header ---- */
+.profile-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+}
+
+.profile-header h1 {
+    margin-bottom: 1.5rem;
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    row-gap: 0.75rem;
+}
+
+/* ---- Sections ---- */
+.profile-section {
+    margin-bottom: 3.5rem;
+}
+
+.profile-section h2 {
+    margin-bottom: 1.2rem;
+}
+
+/* ---- Tables ---- */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.035);
+    border-radius: 10px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.data-table thead th {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+}
+
+.data-table tbody tr:not(:last-child) td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+/* ---- Payment Status (STRONG SELECTORS) ---- */
+.data-table .payment-status {
+    font-weight: 600;
+}
+
+.data-table .payment-status.success {
+    color: #4ade80 !important; /* green */
+}
+
+.data-table .payment-status.failed {
+    color: #f87171 !important; /* red */
+}
+
+.data-table .payment-status.pending {
+    color: #facc15 !important; /* yellow */
+}
