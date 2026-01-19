@@ -98,14 +98,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ngo_db',
         'USER': 'ngo_user',
-        'PASSWORD': '4506',
-        'HOST': 'localhost',
+        'PASSWORD': 'StrongPassword123',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
+
 
 # ===============================
 # Auth / Users
