@@ -123,5 +123,5 @@ For admin dashboard, open
 https://127.0.0.1:8000/admin/
 ```
 
-## Checkout the demo of the project here4tOhBh61BD8
+## Checkout the demo of the project here
 [![Video Title](https://img.youtube.com/vi/4tOhBh61BD8/0.jpg)](https://www.youtube.com/watch?v=4tOhBh61BD8)
